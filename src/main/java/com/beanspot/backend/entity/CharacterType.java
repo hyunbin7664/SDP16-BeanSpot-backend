@@ -1,2 +1,6 @@
-package com.beanspot.backend.entity;public class CharacterType {
+package com.beanspot.backend.entity;
+
+public enum CharacterType {
+    BINI,
+    PANI
 }

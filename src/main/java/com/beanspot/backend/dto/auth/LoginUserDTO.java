@@ -1,6 +1,5 @@
 package com.beanspot.backend.dto.auth;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +10,6 @@ public class LoginUserDTO {
     @Getter
     public static class Req {
         @NotBlank
-        @Email
         private String userId;
         @NotBlank
         private String password;

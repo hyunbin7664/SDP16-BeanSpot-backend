@@ -40,7 +40,7 @@ public class AuthController {
 
 
     @PostMapping("/signup")
-    public ApiResponse<?> signup(@RequestBody SignUpUserDTO.Req userDTO) {
+    public ApiResponse<SignUpUserDTO.Res> signup(@RequestBody SignUpUserDTO.Req userDTO) {
 
         if (userDTO == null || userDTO.getPassword() == null) {
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
@@ -52,7 +52,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ApiResponse<?>  login(@RequestBody LoginUserDTO.Req userDTO) {
+    public ApiResponse<LoginUserDTO.Res> login(@RequestBody LoginUserDTO.Req userDTO) {
 
         LoginUserDTO.Res reponseUserDTO = userService.login(
                 userDTO,
@@ -64,7 +64,7 @@ public class AuthController {
     }
 
     @PostMapping("/oauth/kakao/signup")
-    public ApiResponse<?> kakaoSignup(@CurrentUserSocialId String socialId, @RequestBody SignUpSocialUserDTO.Req userDTO) {
+    public ApiResponse<SignUpSocialUserDTO.Res> kakaoSignup(@CurrentUserSocialId String socialId, @RequestBody SignUpSocialUserDTO.Req userDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(socialId == null) return ApiResponse.fail(new CustomException(ErrorCode.AUTH_VERIFICATION_CODE_EXPIRED));
@@ -75,7 +75,7 @@ public class AuthController {
     }
 
     @GetMapping("/oauth/kakao/login")
-    public ApiResponse<?>  kakaoLogin(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ApiResponse<LoginUserDTO.Res> kakaoLogin(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String socialId = kakaoLoginService.kakaoLogin(code,redirectUrl).getId();
         LoginUserDTO.Res responseUserDTO = userService.loginBySocialId("kakao", socialId);
 
@@ -86,7 +86,7 @@ public class AuthController {
     }
 
     @GetMapping("/check-nickname")
-    public ApiResponse<?> checkNickname(@RequestParam String nickname) {
+    public ApiResponse<CheckAvailabilityResponseDTO> checkNickname(@RequestParam String nickname) {
         boolean isAvailable = userService.isNicknameAvailable(nickname);
         String message = isAvailable ?
                 "사용 가능한 닉네임입니다." :
@@ -101,7 +101,7 @@ public class AuthController {
     }
 
     @GetMapping("/check-id")
-    public ApiResponse<?> checkId(@RequestParam String userId) {
+    public ApiResponse<CheckAvailabilityResponseDTO> checkId(@RequestParam String userId) {
         if (userId == null || userId.isBlank()) {
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         }
