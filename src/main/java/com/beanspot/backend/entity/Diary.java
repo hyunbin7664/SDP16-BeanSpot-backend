@@ -3,14 +3,11 @@ package com.beanspot.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-@Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Entity
-public class Diary {
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Diary extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,43 +16,30 @@ public class Diary {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDate date; // 어느 날짜의 일기인지
-
-    private String content; // 일기 내용
+    private LocalDate date;
 
     @Enumerated(EnumType.STRING)
-    private CharacterType characterType; // 캐릭터 타입 (BINI, PANI)
+    private CharacterType characterType; // GREEN(푸웅), BROWN(꾸웅)
 
     @Enumerated(EnumType.STRING)
-    private EmotionType emotionType; // 감정 타입 (HAPPY, NEUTRAL, ANGRY, CONFUSED, KISS, CRY)
+    private EmotionType emotionType;     // HAPPY, ANGRY, SAD, SURPRISED, CALM, TIRED
 
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private DiaryStatus status = DiaryStatus.ACTIVE; // 일기 상태 (ACTIVE, DELETED)
+    @Column(length = 200)
+    private String content; // 최대 200자
 
-    private LocalDateTime createdAt; // 일기 생성일
-
-    private LocalDateTime updatedAt; // 일기 수정일
-
-    private LocalDateTime deletedAt; // 일기 삭제일 (soft delete)
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = DiaryStatus.ACTIVE;
-        }
-    }
-
-    public void updateDiary(String content, CharacterType characterType, EmotionType emotionType) {
-        this.content = content;
+    @Builder
+    public Diary(User user, LocalDate date, CharacterType characterType, EmotionType emotionType, String content) {
+        this.user = user;
+        this.date = date;
         this.characterType = characterType;
         this.emotionType = emotionType;
-        this.updatedAt = LocalDateTime.now();
+        this.content = content;
     }
 
-    public void deleteDiary() {
-        this.status = DiaryStatus.DELETED;
-        this.deletedAt = LocalDateTime.now();
+    public void update(LocalDate date, CharacterType characterType, EmotionType emotionType, String content) {
+        this.date = date;
+        this.characterType = characterType;
+        this.emotionType = emotionType;
+        this.content = content;
     }
 }
