@@ -4,8 +4,10 @@ import com.beanspot.backend.dto.user.TodoRequestDto;
 import com.beanspot.backend.dto.user.TodoResponseDto;
 import com.beanspot.backend.entity.Todo;
 import com.beanspot.backend.entity.User;
+import com.beanspot.backend.entity.announcement.Announcement;
 import com.beanspot.backend.repository.TodoRepository;
 import com.beanspot.backend.repository.UserRepository;
+import com.beanspot.backend.repository.announcement.AnnouncementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final UserRepository userRepository;
+    private final AnnouncementRepository announcementRepository;
 
     /**
      * 특정 날짜의 투두 리스트 조회
@@ -41,11 +44,19 @@ public class TodoService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
+        // 공고에 속한 할 일이면 해당 공고를 연결 (없으면 일반 할 일)
+        Announcement announcement = null;
+        if (dto.getAnnouncementId() != null) {
+            announcement = announcementRepository.findById(dto.getAnnouncementId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공고입니다."));
+        }
+
         Todo todo = Todo.builder()
                 .content(dto.getContent())
                 .date(dto.getDate())
                 .isCompleted(false) // 기본값은 미완료
                 .user(user)
+                .announcement(announcement)
                 .build();
 
         return todoRepository.save(todo).getId();

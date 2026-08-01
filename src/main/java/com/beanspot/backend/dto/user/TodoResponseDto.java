@@ -17,6 +17,7 @@ public class TodoResponseDto {
     private String content;
     private boolean isCompleted;
     private LocalDate date;
+    private Long announcementId; // 연결된 관심 공고 (없으면 null)
 
     public static TodoResponseDto from(Todo todo) {
         return TodoResponseDto.builder()
@@ -24,6 +25,8 @@ public class TodoResponseDto {
                 .content(todo.getContent())
                 .isCompleted(todo.isCompleted())
                 .date(todo.getDate())
+                .announcementId(
+                        todo.getAnnouncement() != null ? todo.getAnnouncement().getId() : null)
                 .build();
     }
 }

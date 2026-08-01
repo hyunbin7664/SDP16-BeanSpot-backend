@@ -1,5 +1,6 @@
 package com.beanspot.backend.entity;
 
+import com.beanspot.backend.entity.announcement.Announcement;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -18,6 +19,13 @@ public class Todo extends BaseEntity { // 💡 BaseEntity 상속 추가
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    /**
+     * 이 할 일이 속한 관심 공고. 공고와 무관한 일반 할 일이면 null 입니다.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "announcement_id")
+    private Announcement announcement;
 
     private LocalDate date;    // 어느 날짜의 할 일인지
 
